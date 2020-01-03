@@ -21,7 +21,7 @@ IGNORED_PLAYERS = [
 ]
 
 tabOffsets = {'SI':0, 'S':600, 'SU':2400, 'SL':1200, 'Q':1800 , '!':3000}
-rowSizes = {'SI':25, 'S':100, 'SU':100, 'SL':100, 'Q':20, '!':20}
+rowSizes = {'SI':5, 'S':20, 'SU':20, 'SL':20, 'Q':4, '!':4}
 rowOffsets = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'X':5}
 
 def scoresUri(level):
@@ -42,18 +42,19 @@ def parseLevelID(ID):
         if tab == "Q" or tab == "!":
             episode = 0
             level = int(sections[2])
+            if level > 23:
+                return None
+            levelID = tabOffsets[tab] + level * 5 + rowOffsets[row] / 5
+            return levelID
         else:
             episode = int(sections[2])
             level = int(sections[3])
-        if (row == 'X' and tab == 'SI') or episode >= rowSizes[tab] / 5:
+        if (row == 'X' and tab == 'SI') or episode >= rowSizes[tab]  or level > 4:
             return None
-        if tab == 'Q' or tab == '!':
-            if level > 19:
-                return None
+        if row == 'X':
+            levelID = tabOffsets[tab] + rowSizes[tab] * 25 + episode * 5 + level
         else:
-            if level > 4:
-                return None
-        levelID = tabOffsets[tab] + rowSizes[tab] * rowOffsets[row] + episode * 5 + level
+            levelID = levelID = tabOffsets[tab] + episode * 25 + rowOffsets[row] + level
         return levelID
     except:
         return None
